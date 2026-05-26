@@ -23,34 +23,18 @@ type chunkReader struct {
 	prevErr   error
 }
 
-func newChunkReader(chunker chunker) *chunkReader {
-	return &chunkReader{chunker: chunker}
-}
+func newChunkReader(chunker chunker) *chunkReader { _ = "STUB: not implemented"; return nil }
 
 func (r *chunkReader) Read(p []byte) (n int, err error) {
+	_ = "STUB: not implemented"
 	// Copy data into p until it is full, or getNextChunk()
 	// returns a non-nil error.
-	for {
-		// Drain r.prevChunk first before checking for an error.
-		if len(r.prevChunk) > 0 {
-			copied := copy(p[n:], r.prevChunk)
-			n += copied
-			r.prevChunk = r.prevChunk[copied:]
-			if len(r.prevChunk) > 0 {
-				// p is full.
-				return n, nil
-			}
-		}
-
-		if r.prevErr != nil {
-			// r.prevChunk is fully drained, so return the
-			// error.
-			return n, r.prevErr
-		}
-
-		r.prevChunk, r.prevErr = r.chunker.getNextChunk()
-		if len(r.prevChunk) == 0 && r.prevErr == nil {
-			panic("empty chunk and nil error")
-		}
-	}
+	return 0, nil
 }
+
+// Drain r.prevChunk first before checking for an error.
+
+// p is full.
+
+// r.prevChunk is fully drained, so return the
+// error.

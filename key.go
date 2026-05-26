@@ -3,43 +3,24 @@
 
 package saltpack
 
-import (
-	"crypto/hmac"
-)
-
 // RawBoxKey is the raw byte-representation of what a box key should
 // look like, a static 32-byte buffer. Used for NaCl Box.
 type RawBoxKey [32]byte
 
 func rawBoxKeyFromSlice(slice []byte) (*RawBoxKey, error) {
-	var result RawBoxKey
-	if len(slice) != len(result) {
-		return nil, ErrBadBoxKey
-	}
-	result = sliceToByte32(slice)
-	return &result, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // SymmetricKey is a template for a symmetric key, a 32-byte static
 // buffer. Used for NaCl SecretBox.
 type SymmetricKey [32]byte
 
-func newRandomSymmetricKey() (*SymmetricKey, error) {
-	var s SymmetricKey
-	err := csprngRead(s[:])
-	if err != nil {
-		return nil, err
-	}
-	return &s, nil
-}
+func newRandomSymmetricKey() (*SymmetricKey, error) { _ = "STUB: not implemented"; return nil, nil }
 
 func symmetricKeyFromSlice(slice []byte) (*SymmetricKey, error) {
-	var result SymmetricKey
-	if len(slice) != len(result) {
-		return nil, ErrBadSymmetricKey
-	}
-	result = sliceToByte32(slice)
-	return &result, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // EphemeralKeyCreator is an interface for objects that can create
@@ -148,6 +129,4 @@ type SigKeyring interface {
 }
 
 // PublicKeyEqual returns true if the two public keys are equal.
-func PublicKeyEqual(k1, k2 BasePublicKey) bool {
-	return hmac.Equal(k1.ToKID(), k2.ToKID())
-}
+func PublicKeyEqual(k1, k2 BasePublicKey) bool { _ = "STUB: not implemented"; return false }

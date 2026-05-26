@@ -13,15 +13,9 @@ type encoder interface {
 	Encode(v any) error
 }
 
-func newEncoder(w io.Writer) encoder {
-	return codec.NewEncoder(w, codecHandle())
-}
+func newEncoder(w io.Writer) encoder { _ = "STUB: not implemented"; return *new(encoder) }
 
-func encodeToBytes(i any) ([]byte, error) {
-	var encoded []byte
-	err := codec.NewEncoderBytes(&encoded, codecHandle()).Encode(i)
-	return encoded, err
-}
+func encodeToBytes(i any) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // If p has type {Encryption,Signcryption,Signature}Header, then
 // decodeFromBytes would succeed even if the version numbers or mode
@@ -32,24 +26,16 @@ func encodeToBytes(i any) ([]byte, error) {
 // aren't minimally encoded, but there's no easy way to check that
 // either.
 
-func decodeFromBytes(p any, b []byte) error {
-	return codec.NewDecoderBytes(b, codecHandle()).Decode(p)
-}
+func decodeFromBytes(p any, b []byte) error { _ = "STUB: not implemented"; return nil }
 
 type msgpackStream struct {
 	decoder *codec.Decoder
 	seqno   packetSeqno
 }
 
-func newMsgpackStream(r io.Reader) *msgpackStream {
-	return &msgpackStream{decoder: codec.NewDecoder(r, codecHandle())}
-}
+func newMsgpackStream(r io.Reader) *msgpackStream { _ = "STUB: not implemented"; return nil }
 
 func (r *msgpackStream) Read(i any) (ret packetSeqno, err error) {
-	if err = r.decoder.Decode(i); err != nil {
-		return ret, err
-	}
-	ret = r.seqno
-	r.seqno++
-	return ret, nil
+	_ = "STUB: not implemented"
+	return *new(packetSeqno), nil
 }

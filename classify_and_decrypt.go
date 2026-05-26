@@ -5,14 +5,7 @@ package saltpack
 
 import (
 	"bufio"
-	"fmt"
 	"io"
-	"regexp"
-	"strings"
-
-	"github.com/keybase/saltpack/encoding/basex"
-
-	"github.com/keybase/go-codec/codec"
 )
 
 const (
@@ -33,79 +26,28 @@ const (
 // saltpack message. If err is nil, msgType will return the type of the encoded message, but this does *NOT* guarantee that the
 // rest of the message is well formed.
 func IsSaltpackBinary(stream *bufio.Reader) (msgType MessageType, version Version, err error) {
-	b, err := stream.Peek(minLengthToIdentifyBinarySaltpack)
-	if err == bufio.ErrBufferFull {
-		return MessageTypeUnknown, Version{}, ErrShortSliceOrBuffer
-	}
-	if err != nil {
-		return MessageTypeUnknown, Version{}, err
-	}
-	return IsSaltpackBinarySlice(b)
+	_ = "STUB: not implemented"
+	return *new(MessageType), *new(Version), nil
 }
 
 // IsSaltpackBinarySlice tries to determine if the input slice encodes the beginning of a binary saltpack message. It returns a non nil error if the slice is not
 // long enough to make this determination, or if it does not appear to contain a binary saltpack message. If err is nil, msgType
 // will return the type of the encoded message, but this does *NOT* guarantee that the rest of the message is well formed.
 func IsSaltpackBinarySlice(b []byte) (msgType MessageType, version Version, err error) {
+	_ = "STUB: not implemented"
 	// To avoid decoding the whole header, part of the messagepack decoding is done manually
 	// instead of through go-codec. See https://github.com/msgpack/msgpack/blob/master/spec.md
 	// for details on the encoding.
-
-	if len(b) < minLengthToIdentifyBinarySaltpack {
-		return MessageTypeUnknown, Version{}, ErrShortSliceOrBuffer
-	}
-
-	// The header is double-encoded, so we need to skip the "bin" tag at the front to
-	// get at the encoded header array.
-	var binTagBytesToSkip int
-	if b[0] == 0xc4 {
-		binTagBytesToSkip = 2
-	} else if b[0] == 0xc5 {
-		binTagBytesToSkip = 3
-	} else if b[0] == 0xc6 {
-		binTagBytesToSkip = 5
-	} else {
-		return MessageTypeUnknown, Version{}, ErrNotASaltpackMessage
-	}
-
-	// The header should be a msg pack encoded array: verify it is, that it has at least three elements, and
-	// note how many bytes to skip to point to its first element.
-	arrayTagByte := b[binTagBytesToSkip]
-	var arrayTagBytesToSkip int
-	if 0x93 <= arrayTagByte && arrayTagByte <= 0x9f {
-		arrayTagBytesToSkip = 1
-	} else if arrayTagByte == 0xdc {
-		arrayTagBytesToSkip = 3
-	} else if arrayTagByte == 0xdd {
-		arrayTagBytesToSkip = 5
-	} else {
-		return MessageTypeUnknown, Version{}, ErrNotASaltpackMessage
-	}
-
-	// Devode the first 3 elements of the header, and use them to classify the message.
-	var mh codec.MsgpackHandle
-	decoder := codec.NewDecoderBytes(b[binTagBytesToSkip+arrayTagBytesToSkip:], &mh)
-	var formatName string
-
-	if err := decoder.Decode(&formatName); err != nil {
-		return MessageTypeUnknown, Version{}, ErrNotASaltpackMessage
-	}
-	if formatName != FormatName {
-		return MessageTypeUnknown, Version{}, ErrNotASaltpackMessage
-	}
-	if err := decoder.Decode(&version); err != nil {
-		return MessageTypeUnknown, Version{}, ErrNotASaltpackMessage
-	}
-	if err := decoder.Decode(&msgType); err != nil {
-		return MessageTypeUnknown, Version{}, ErrNotASaltpackMessage
-	}
-	switch msgType {
-	case MessageTypeEncryption, MessageTypeSigncryption, MessageTypeAttachedSignature, MessageTypeDetachedSignature:
-		return msgType, version, nil
-	default:
-		return MessageTypeUnknown, Version{}, ErrNotASaltpackMessage
-	}
+	return *new(MessageType), *new(Version), nil
 }
+
+// The header is double-encoded, so we need to skip the "bin" tag at the front to
+// get at the encoded header array.
+
+// The header should be a msg pack encoded array: verify it is, that it has at least three elements, and
+// note how many bytes to skip to point to its first element.
+
+// Devode the first 3 elements of the header, and use them to classify the message.
 
 // IsSaltpackArmored peeks into the provided bufio.Reader to determine whether it encodes an ASCII-armored saltpack message.
 // It does not consume any of the reader's bytes. The buffer size of the reader must be sufficient to contain the header frame plus
@@ -114,12 +56,8 @@ func IsSaltpackBinarySlice(b []byte) (msgType MessageType, version Version, err 
 // saltpack message. If err is nil, then the brand, version and expected type of the message will be returned, but this does *NOT* guarantee that the
 // rest of the message is well formed.
 func IsSaltpackArmored(stream *bufio.Reader) (brand string, msgType MessageType, ver Version, err error) {
-	buf, err := stream.Peek(stream.Size())
-	if (err != nil && err != io.EOF) || len(buf) == 0 {
-		return "", MessageTypeUnknown, ver, err
-	}
-
-	return IsSaltpackArmoredPrefix(string(buf))
+	_ = "STUB: not implemented"
+	return "", *new(MessageType), *new(Version), nil
 }
 
 // IsSaltpackArmoredPrefix tries to determine whether the string is the prefix of a valid ASCII-armored saltpack message.
@@ -128,85 +66,24 @@ func IsSaltpackArmored(stream *bufio.Reader) (brand string, msgType MessageType,
 // saltpack message. If err is nil, then the brand, version and expected type of the message will be returned, but this does *NOT* guarantee that the
 // rest of the message is well formed.
 func IsSaltpackArmoredPrefix(pref string) (brand string, messageType MessageType, ver Version, err error) {
+	_ = "STUB: not implemented"
 	// replace blocks of characters in the set [>\n\r\t ] with a single space, so that the next regexp is simpler
-	re := regexp.MustCompile("[>\n\r\t ]+")
-	s := strings.TrimSpace(re.ReplaceAllString(pref, " "))
-
-	headerRegExpSt := "^BEGIN (?:([a-zA-Z0-9]+) )?SALTPACK (" + EncryptionArmorString + "|" + SignedArmorString + "|" + DetachedSignatureArmorString + ") ?\\.([a-zA-Z0-9 ]*)"
-	headerRegExp := regexp.MustCompile(headerRegExpSt)
-
-	m := headerRegExp.FindStringSubmatch(s)
-	if len(m) == 0 {
-		// Matches at most five words
-		if !regexp.MustCompile("^([a-zA-Z0-9]+ ?){0,5}$").MatchString(s) {
-			return "", MessageTypeUnknown, Version{}, ErrNotASaltpackMessage
-		}
-
-		strs := strings.Split(s, " ")
-
-		switch len(strs) {
-		case 1:
-			if strings.HasPrefix(string(headerMarker), strs[0]) { // nolint
-				return "", MessageTypeUnknown, Version{}, ErrShortSliceOrBuffer
-			}
-			return "", MessageTypeUnknown, Version{}, ErrNotASaltpackMessage
-		case 2:
-			if string(headerMarker) == strs[0] {
-				return "", MessageTypeUnknown, Version{}, ErrShortSliceOrBuffer
-			}
-			return "", MessageTypeUnknown, Version{}, ErrNotASaltpackMessage
-		case 3, 4, 5:
-			// more processing needed.
-		default:
-			panic("logic error in ClassifyStream")
-		}
-
-		headerWithoutBrand := strings.Join(append([]string{strs[0]}, strs[2:]...), " ")
-		headerPrefix := fmt.Sprintf("%s %s", headerMarker, strings.ToUpper(FormatName))
-		encryptionPrefix := fmt.Sprintf("%s %s", headerPrefix, EncryptionArmorString)
-		signedPrefix := fmt.Sprintf("%s %s", headerPrefix, SignedArmorString)
-		detachedSigPrefix := fmt.Sprintf("%s %s", headerPrefix, DetachedSignatureArmorString)
-
-		if strings.HasPrefix(encryptionPrefix, headerWithoutBrand) ||
-			strings.HasPrefix(signedPrefix, headerWithoutBrand) ||
-			strings.HasPrefix(detachedSigPrefix, headerWithoutBrand) ||
-			strings.HasPrefix(encryptionPrefix, s) ||
-			strings.HasPrefix(signedPrefix, s) ||
-			strings.HasPrefix(detachedSigPrefix, s) {
-			return "", MessageTypeUnknown, Version{}, ErrShortSliceOrBuffer
-		}
-		return "", MessageTypeUnknown, Version{}, ErrNotASaltpackMessage
-	}
-
-	brand = m[1]
-	headerArmorType := m[2] // can be one of SignedArmorString, DetachedSignatureArmorString, EncryptionArmorString
-
-	dec, err := basex.Base62StdEncoding.DecodeString(m[3])
-	// This is not a prefix free encoding, so we need to decode a full codeword (32 bytes) to make sure we are not interpreting
-	// a truncated block as if it was a short block. Moreover, we only need one codeword, so if an error is returned but a codeword
-	// was decoded, the error can be ignored.
-	if len(dec) < 32 {
-		if err == basex.ErrInvalidEncodingLength || err == nil {
-			return "", MessageTypeUnknown, ver, ErrShortSliceOrBuffer
-		}
-		return "", MessageTypeUnknown, ver, ErrNotASaltpackMessage
-	}
-
-	messageType, ver, err = IsSaltpackBinarySlice(dec)
-	if err != nil {
-		return "", MessageTypeUnknown, ver, err
-	}
-
-	// ensure that the type of the armor matches the type of the inner header
-	if (messageType == MessageTypeSigncryption && headerArmorType != EncryptionArmorString) ||
-		(messageType == MessageTypeEncryption && headerArmorType != EncryptionArmorString) ||
-		(messageType == MessageTypeAttachedSignature && headerArmorType != SignedArmorString) ||
-		(messageType == MessageTypeDetachedSignature && headerArmorType != DetachedSignatureArmorString) {
-		return "", MessageTypeUnknown, ver, ErrNotASaltpackMessage
-	}
-
-	return brand, messageType, ver, nil
+	return "", *new(MessageType), *new(Version), nil
 }
+
+// Matches at most five words
+
+// nolint
+
+// more processing needed.
+
+// can be one of SignedArmorString, DetachedSignatureArmorString, EncryptionArmorString
+
+// This is not a prefix free encoding, so we need to decode a full codeword (32 bytes) to make sure we are not interpreting
+// a truncated block as if it was a short block. Moreover, we only need one codeword, so if an error is returned but a codeword
+// was decoded, the error can be ignored.
+
+// ensure that the type of the armor matches the type of the inner header
 
 // ClassifyStream peeks at the beginning of a stream and checks wether it seems to contain a valid
 // saltpack message (either armored or not).
@@ -219,17 +96,8 @@ func IsSaltpackArmoredPrefix(pref string) (brand string, messageType MessageType
 // Note this classification is just a guess based on the beginning of the stream, and it does not
 // guarantee that the message is valid or well formed.
 func ClassifyStream(stream *bufio.Reader) (isArmored bool, brand string, messageType MessageType, ver Version, err error) {
-	brand, messageType, ver, err = IsSaltpackArmored(stream)
-	if err == nil {
-		return true, brand, messageType, ver, err
-	} else if err == ErrShortSliceOrBuffer {
-		return false, "", MessageTypeUnknown, Version{}, ErrShortSliceOrBuffer
-	}
-	messageType, ver, err = IsSaltpackBinary(stream)
-	if err == nil {
-		return false, "", messageType, ver, err
-	}
-	return false, "", MessageTypeUnknown, Version{}, err
+	_ = "STUB: not implemented"
+	return false, "", *new(MessageType), *new(Version), nil
 }
 
 // ClassifyEncryptedStreamAndMakeDecoder takes as input an io.Reader (containing an encrypted saltpack stream),
@@ -241,32 +109,6 @@ func ClassifyStream(stream *bufio.Reader) (isArmored bool, brand string, message
 func ClassifyEncryptedStreamAndMakeDecoder(source io.Reader, decryptionKeyring SigncryptKeyring, keyResolver SymmetricKeyResolver) (
 	plainsource io.Reader, msgType MessageType, mki *MessageKeyInfo, senderPublic SigningPublicKey, isArmored bool, brand string, ver Version, err error,
 ) {
-	stream := bufio.NewReader(source)
-
-	isArmored, _, msgType, ver, err = ClassifyStream(stream)
-	if err == ErrShortSliceOrBuffer {
-		return nil, MessageTypeUnknown, nil, nil, false, "", Version{}, ErrShortSliceOrBuffer
-	}
-	if err != nil {
-		return nil, MessageTypeUnknown, nil, nil, false, "", Version{}, ErrNotASaltpackMessage
-	}
-
-	switch msgType {
-	case MessageTypeEncryption:
-		if isArmored {
-			mki, plainsource, brand, err = NewDearmor62DecryptStream(CheckKnownMajorVersion, stream, decryptionKeyring)
-		} else {
-			mki, plainsource, err = NewDecryptStream(CheckKnownMajorVersion, stream, decryptionKeyring)
-		}
-		return plainsource, msgType, mki, nil, isArmored, brand, ver, err
-	case MessageTypeSigncryption:
-		if isArmored {
-			senderPublic, plainsource, brand, err = NewDearmor62SigncryptOpenStream(stream, decryptionKeyring, keyResolver)
-		} else {
-			senderPublic, plainsource, err = NewSigncryptOpenStream(stream, decryptionKeyring, keyResolver)
-		}
-		return plainsource, msgType, nil, senderPublic, isArmored, brand, ver, err
-	default:
-		return nil, MessageTypeUnknown, nil, nil, false, "", Version{}, ErrWrongMessageType{MessageTypeEncryption, msgType}
-	}
+	_ = "STUB: not implemented"
+	return *new(io.Reader), *new(MessageType), nil, *new(SigningPublicKey), false, "", *new(Version), nil
 }

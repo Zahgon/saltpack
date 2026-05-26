@@ -35,25 +35,21 @@ const MessageTypeDetachedSignature MessageType = 2
 const MessageTypeSigncryption MessageType = 3
 
 // Version1 returns the Version for Saltpack V1.
-func Version1() Version {
-	return Version{Major: 1, Minor: 0}
-}
+func Version1() Version { _ = "STUB: not implemented"; return *new(Version) }
 
 // Version2 returns the Version for Saltpack V2.
-func Version2() Version {
-	return Version{Major: 2, Minor: 0}
-}
+func Version2() Version { _ = "STUB: not implemented"; return *new(Version) }
 
 // CurrentVersion returns the Version for the currently-used Saltpack
 // version.
 func CurrentVersion() Version {
-	return Version2()
+	_ = "STUB: not implemented"
+
+	// KnownVersions returns all known Saltpack versions.
+	return *new(Version)
 }
 
-// KnownVersions returns all known Saltpack versions.
-func KnownVersions() []Version {
-	return []Version{Version1(), Version2()}
-}
+func KnownVersions() []Version { _ = "STUB: not implemented"; return nil }
 
 // encryptionBlockSize is by default 1MB and can't currently be tweaked.
 const encryptionBlockSize int = 1048576
@@ -99,17 +95,4 @@ const cryptoAuthBytes = 32
 
 const cryptoAuthKeyBytes = 32
 
-func (m MessageType) String() string {
-	switch m {
-	case MessageTypeEncryption:
-		return "an encrypted message"
-	case MessageTypeDetachedSignature:
-		return "a detached signature"
-	case MessageTypeAttachedSignature:
-		return "an attached signature"
-	case MessageTypeSigncryption:
-		return "a signed and encrypted message"
-	default:
-		return "an unknown message type"
-	}
-}
+func (m MessageType) String() string { _ = "STUB: not implemented"; return "" }

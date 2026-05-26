@@ -28,25 +28,24 @@ var Armor62Params = armorParams{
 // To make the output look pretty, a space is inserted every 15 characters of output,
 // and a newline is inserted every 200 words.
 func NewArmor62EncoderStream(encoded io.Writer, typ MessageType, brand string) (io.WriteCloser, error) {
-	hdr := makeFrame(headerMarker, typ, brand)
-	ftr := makeFrame(footerMarker, typ, brand)
-	return newArmorEncoderStream(encoded, hdr, ftr, Armor62Params)
+	_ = "STUB: not implemented"
+	return *new(io.WriteCloser), nil
 }
 
 // Armor62Seal takes an input plaintext and returns and output armor encoding
 // as a string, or an error if a problem was encountered. Also provide a header
 // and a footer to frame the message. Uses Base62 encoding scheme
 func Armor62Seal(plaintext []byte, typ MessageType, brand string) (string, error) {
-	hdr := makeFrame(headerMarker, typ, brand)
-	ftr := makeFrame(footerMarker, typ, brand)
-	return armorSeal(plaintext, hdr, ftr, Armor62Params)
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 // NewArmor62DecoderStream is used to decode input base62-armoring format. It returns
 // a stream you can read from, and also a Frame you can query to see what the open/close
 // frame markers were. hc and fc are optional and can be nil.
 func NewArmor62DecoderStream(r io.Reader, hc HeaderChecker, fc FrameChecker) (io.Reader, Frame, error) {
-	return newArmorDecoderStream(r, Armor62Params, hc, fc)
+	_ = "STUB: not implemented"
+	return *new(io.Reader), *new(Frame), nil
 }
 
 // Armor62Open runs armor stream decoding, but on a string, and it outputs
@@ -54,44 +53,27 @@ func NewArmor62DecoderStream(r io.Reader, hc HeaderChecker, fc FrameChecker) (io
 //
 // Deprecated: use Armor62OpenWithValidation instead.
 func Armor62Open(msg string) (body []byte, header string, footer string, err error) {
-	body, _, header, footer, err = Armor62OpenWithValidation(msg, nil, nil)
-	return body, header, footer, err
+	_ = "STUB: not implemented"
+	return nil, "", "", nil
 }
 
 // Armor62OpenWithValidation runs armor stream decoding, but on a string, and it outputs
 // a string. It validates header and footer with the provided checkers (which are optional and can be nil).
 func Armor62OpenWithValidation(msg string, hc HeaderChecker, fc FrameChecker) (body []byte, brand string, header string, footer string, err error) {
-	return armorOpen(msg, Armor62Params, hc, fc)
+	_ = "STUB: not implemented"
+	return nil, "", "", "", nil
 }
 
 // CheckArmor62Frame checks that the frame matches our standard
 // begin/end frame
 func CheckArmor62Frame(frame Frame, typ MessageType) (brand string, err error) {
-	var hdr, ftr string
-	if hdr, err = frame.GetHeader(); err != nil {
-		return "", err
-	}
-	if ftr, err = frame.GetFooter(); err != nil {
-		return "", err
-	}
-	return CheckArmor62(hdr, ftr, typ)
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 // CheckArmor62 checks that the frame matches our standard
 // begin/end frame
 func CheckArmor62(hdr string, ftr string, typ MessageType) (brand string, err error) {
-	brand, err = parseFrame(hdr, typ, headerMarker)
-	if err != nil {
-		return "", err
-	}
-	var b2 string
-	b2, err = parseFrame(ftr, typ, footerMarker)
-	if err != nil {
-		return "", err
-	}
-
-	if b2 != brand {
-		return "", makeErrBadFrame("brand mismatch: %q != %q", brand, b2)
-	}
-	return brand, nil
+	_ = "STUB: not implemented"
+	return "", nil
 }

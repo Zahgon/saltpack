@@ -4,7 +4,6 @@
 package saltpack
 
 import (
-	"bytes"
 	"io"
 )
 
@@ -23,19 +22,8 @@ var (
 // processing, an io.Reader stream from which you can read the plaintext, the armor branding, and
 // maybe an error if there was a failure.
 func NewDearmor62DecryptStream(versionValidator VersionValidator, ciphertext io.Reader, kr Keyring) (mki *MessageKeyInfo, ds io.Reader, brand string, err error) {
-	dearmored, frame, err := NewArmor62DecoderStream(ciphertext, armor62EncryptionHeaderChecker, armor62EncryptionFrameChecker)
-	if err != nil {
-		return nil, nil, "", err
-	}
-	brand, err = frame.GetBrand()
-	if err != nil {
-		return nil, nil, "", err
-	}
-	mki, ds, err = NewDecryptStream(versionValidator, dearmored, kr)
-	if err != nil {
-		return mki, nil, "", err
-	}
-	return mki, ds, brand, nil
+	_ = "STUB: not implemented"
+	return nil, *new(io.Reader), "", nil
 }
 
 // Dearmor62DecryptOpen takes an armor62'ed, encrypted ciphertext and attempts to
@@ -44,14 +32,6 @@ func NewDearmor62DecryptStream(versionValidator VersionValidator, ciphertext io.
 // processing, the plaintext (if decryption succeeded), the armor branding, and
 // maybe an error if there was a failure.
 func Dearmor62DecryptOpen(versionValidator VersionValidator, ciphertext string, kr Keyring) (*MessageKeyInfo, []byte, string, error) {
-	buf := bytes.NewBufferString(ciphertext)
-	mki, s, brand, err := NewDearmor62DecryptStream(versionValidator, buf, kr)
-	if err != nil {
-		return mki, nil, "", err
-	}
-	out, err := io.ReadAll(s)
-	if err != nil {
-		return mki, nil, "", err
-	}
-	return mki, out, brand, nil
+	_ = "STUB: not implemented"
+	return nil, nil, "", nil
 }

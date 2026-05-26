@@ -36,41 +36,20 @@
 package saltpack
 
 import (
-	cryptorand "crypto/rand"
-	"encoding/binary"
 	"io"
 )
 
 // csprngReadFull is a thin wrapper around io.ReadFull on a given
 // CSPRNG that also (paranoidly) checks the length.
-func csprngReadFull(csprng io.Reader, b []byte) error {
-	n, err := io.ReadFull(csprng, b)
-	if err != nil {
-		return err
-	}
-	if n != len(b) {
-		return ErrInsufficientRandomness
-	}
-	return nil
-}
+func csprngReadFull(csprng io.Reader, b []byte) error { _ = "STUB: not implemented"; return nil }
 
 // csprngRead is like crypto/rand.Read, except it uses csprngReadFull
 // instead of io.ReadFull.
-func csprngRead(b []byte) error {
-	return csprngReadFull(cryptorand.Reader, b)
-}
+func csprngRead(b []byte) error { _ = "STUB: not implemented"; return nil }
 
 // csprngUint32, given a CSPRNG, returns a uniformly distributed
 // random number in [0, 2³²).
-func csprngUint32(csprng io.Reader) (uint32, error) {
-	var buf [4]byte
-	err := csprngReadFull(csprng, buf[:])
-	if err != nil {
-		return 0, err
-	}
-
-	return binary.BigEndian.Uint32(buf[:]), nil
-}
+func csprngUint32(csprng io.Reader) (uint32, error) { _ = "STUB: not implemented"; return 0, nil }
 
 // csprngUint32n, given a CSPRNG, returns, as a uint32, a uniformly
 // distributed random number in [0, n). It is adapted from
@@ -80,28 +59,15 @@ func csprngUint32(csprng io.Reader) (uint32, error) {
 // https://lemire.me/blog/2016/06/27/a-fast-alternative-to-the-modulo-reduction
 // https://lemire.me/blog/2016/06/30/fast-random-shuffling
 func csprngUint32n(csprng io.Reader, n uint32) (uint32, error) {
-	v, err := csprngUint32(csprng)
-	if err != nil {
-		return 0, err
-	}
-	prod := uint64(v) * uint64(n)
-	//nolint:gosec // intentionally taking low 32 bits
-	low := uint32(prod)
-	if low < n {
-		thresh := -n % n
-		for low < thresh {
-			v, err = csprngUint32(csprng)
-			if err != nil {
-				return 0, err
-			}
-			prod = uint64(v) * uint64(n)
-			//nolint:gosec // intentionally taking low 32 bits
-			low = uint32(prod)
-		}
-	}
-	//nolint:gosec // intentionally taking high 32 bits
-	return uint32(prod >> 32), nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
+
+//nolint:gosec // intentionally taking low 32 bits
+
+//nolint:gosec // intentionally taking low 32 bits
+
+//nolint:gosec // intentionally taking high 32 bits
 
 // csprngShuffle randomizes the order of elements given a CSPRNG. n is
 // the number of elements, which must be >= 0 and < 2³¹. swap swaps
@@ -111,20 +77,8 @@ func csprngUint32n(csprng io.Reader, n uint32) (uint32, error) {
 // https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle , and is
 // adapted from math/rand.Shuffle from go 1.10.
 func csprngShuffle(csprng io.Reader, n int, swap func(i, j int)) error {
-	if n < 0 {
-		panic("csprngShuffle: n < 0")
-	}
-	if n > ((1 << 31) - 1) {
-		panic("csprngShuffle: n >= 2³¹")
-	}
-
-	for i := n - 1; i > 0; i-- {
-		//nolint:gosec // i+1 is bounded by n < 2³¹, conversion is safe
-		j, err := csprngUint32n(csprng, uint32(i+1))
-		if err != nil {
-			return err
-		}
-		swap(i, int(j))
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
+
+//nolint:gosec // i+1 is bounded by n < 2³¹, conversion is safe

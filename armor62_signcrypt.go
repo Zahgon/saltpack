@@ -4,7 +4,6 @@
 package saltpack
 
 import (
-	"bytes"
 	"io"
 )
 
@@ -15,16 +14,9 @@ var (
 )
 
 func newSigncryptArmor62SealStream(ciphertext io.Writer, sender SigningSecretKey, receiverBoxKeys []BoxPublicKey, receiverSymmetricKeys []ReceiverSymmetricKey, ephemeralKeyCreator EphemeralKeyCreator, rng signcryptRNG, brand string) (plaintext io.WriteCloser, err error) {
+	_ = "STUB: not implemented"
 	// Note: same "BEGIN SALTPACK ENCRYPTED" visible message type.
-	enc, err := NewArmor62EncoderStream(ciphertext, MessageTypeEncryption, brand)
-	if err != nil {
-		return nil, err
-	}
-	out, err := newSigncryptSealStream(enc, sender, receiverBoxKeys, receiverSymmetricKeys, ephemeralKeyCreator, rng)
-	if err != nil {
-		return nil, err
-	}
-	return closeForwarder([]io.WriteCloser{out, enc}), nil
+	return *new(io.WriteCloser), nil
 }
 
 // NewSigncryptArmor62SealStream creates a stream that consumes plaintext data.
@@ -44,22 +36,13 @@ func newSigncryptArmor62SealStream(ciphertext io.Writer, sender SigningSecretKey
 // ephemeralKeyCreator should be the last argument; it's the 2nd one
 // to preserve the public API.
 func NewSigncryptArmor62SealStream(ciphertext io.Writer, ephemeralKeyCreator EphemeralKeyCreator, sender SigningSecretKey, receiverBoxKeys []BoxPublicKey, receiverSymmetricKeys []ReceiverSymmetricKey, brand string) (plaintext io.WriteCloser, err error) {
-	return newSigncryptArmor62SealStream(ciphertext, sender, receiverBoxKeys, receiverSymmetricKeys, ephemeralKeyCreator, defaultSigncryptRNG{}, brand)
+	_ = "STUB: not implemented"
+	return *new(io.WriteCloser), nil
 }
 
 func signcryptArmor62Seal(plaintext []byte, sender SigningSecretKey, receiverBoxKeys []BoxPublicKey, receiverSymmetricKeys []ReceiverSymmetricKey, ephemeralKeyCreator EphemeralKeyCreator, rng signcryptRNG, brand string) (string, error) {
-	var buf bytes.Buffer
-	enc, err := newSigncryptArmor62SealStream(&buf, sender, receiverBoxKeys, receiverSymmetricKeys, ephemeralKeyCreator, rng, brand)
-	if err != nil {
-		return "", err
-	}
-	if _, err := enc.Write(plaintext); err != nil {
-		return "", err
-	}
-	if err := enc.Close(); err != nil {
-		return "", err
-	}
-	return buf.String(), nil
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 // SigncryptArmor62Seal is the non-streaming version of NewSigncryptArmor62SealStream, which
@@ -68,7 +51,8 @@ func signcryptArmor62Seal(plaintext []byte, sender SigningSecretKey, receiverBox
 // ephemeralKeyCreator should be the last argument; it's the 2nd one
 // to preserve the public API.
 func SigncryptArmor62Seal(plaintext []byte, ephemeralKeyCreator EphemeralKeyCreator, sender SigningSecretKey, receiverBoxKeys []BoxPublicKey, receiverSymmetricKeys []ReceiverSymmetricKey, brand string) (string, error) {
-	return signcryptArmor62Seal(plaintext, sender, receiverBoxKeys, receiverSymmetricKeys, ephemeralKeyCreator, defaultSigncryptRNG{}, brand)
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
 // NewDearmor62SigncryptOpenStream makes a new stream that dearmors and decrypts the given
@@ -77,19 +61,8 @@ func SigncryptArmor62Seal(plaintext []byte, ephemeralKeyCreator EphemeralKeyCrea
 // processing, an io.Reader stream from which you can read the plaintext, the armor branding, and
 // maybe an error if there was a failure.
 func NewDearmor62SigncryptOpenStream(ciphertext io.Reader, keyring SigncryptKeyring, resolver SymmetricKeyResolver) (SigningPublicKey, io.Reader, string, error) {
-	dearmored, frame, err := NewArmor62DecoderStream(ciphertext, armor62SigncryptionHeaderChecker, armor62SigncryptionFrameChecker)
-	if err != nil {
-		return nil, nil, "", err
-	}
-	brand, err := frame.GetBrand()
-	if err != nil {
-		return nil, nil, "", err
-	}
-	mki, r, err := NewSigncryptOpenStream(dearmored, keyring, resolver)
-	if err != nil {
-		return mki, nil, "", err
-	}
-	return mki, r, brand, nil
+	_ = "STUB: not implemented"
+	return *new(SigningPublicKey), *new(io.Reader), "", nil
 }
 
 // Dearmor62SigncryptOpen takes an armor62'ed, encrypted ciphertext and attempts to
@@ -98,14 +71,6 @@ func NewDearmor62SigncryptOpenStream(ciphertext io.Reader, keyring SigncryptKeyr
 // processing, the plaintext (if decryption succeeded), the armor branding, and
 // maybe an error if there was a failure.
 func Dearmor62SigncryptOpen(ciphertext string, keyring SigncryptKeyring, resolver SymmetricKeyResolver) (SigningPublicKey, []byte, string, error) {
-	buf := bytes.NewBufferString(ciphertext)
-	mki, s, brand, err := NewDearmor62SigncryptOpenStream(buf, keyring, resolver)
-	if err != nil {
-		return mki, nil, "", err
-	}
-	out, err := io.ReadAll(s)
-	if err != nil {
-		return mki, nil, "", err
-	}
-	return mki, out, brand, nil
+	_ = "STUB: not implemented"
+	return *new(SigningPublicKey), nil, "", nil
 }

@@ -4,14 +4,9 @@
 package saltpack
 
 import (
-	"bytes"
-	"crypto/hmac"
 	"crypto/sha512"
-	"encoding/binary"
-	"fmt"
 
 	"github.com/keybase/go-codec/codec"
-	"golang.org/x/crypto/chacha20poly1305"
 )
 
 // maxReceiverCount is the maximum number of receivers allowed
@@ -23,112 +18,46 @@ const maxReceiverCount = (1 << 32) - 1
 // of encrypted blocks. Each encrypted block of course fits into a packet.
 type encryptionBlockNumber uint64
 
-func codecHandle() *codec.MsgpackHandle {
-	var mh codec.MsgpackHandle
-	mh.WriteExt = true
-	return &mh
-}
+func codecHandle() *codec.MsgpackHandle { _ = "STUB: not implemented"; return nil }
 
-func (e encryptionBlockNumber) check() error {
-	if e >= encryptionBlockNumber(0xffffffffffffffff) {
-		return ErrPacketOverflow
-	}
-	return nil
-}
+func (e encryptionBlockNumber) check() error { _ = "STUB: not implemented"; return nil }
 
 // assertEndOfStream reads from stream, and converts a nil error into
 // ErrTrailingGarbage. Thus, it always returns a non-nil error. This
 // should be used in a context where io.EOF is expected, and anything
 // else is an error.
-func assertEndOfStream(stream *msgpackStream) error {
-	var i any
-	_, err := stream.Read(&i)
-	if err == nil {
-		err = ErrTrailingGarbage
-	}
-	return err
-}
+func assertEndOfStream(stream *msgpackStream) error { _ = "STUB: not implemented"; return nil }
 
 type headerHash [sha512.Size]byte
 
 func attachedSignatureInput(version Version, headerHash headerHash, payloadChunk []byte, seqno packetSeqno, isFinal bool) []byte {
-	hasher := sha512.New()
-	_, _ = hasher.Write(headerHash[:])
-	_ = binary.Write(hasher, binary.BigEndian, seqno)
-	switch version.Major {
-	case 1:
-	// Nothing to do.
-	case 2:
-		var isFinalByte byte
-		if isFinal {
-			isFinalByte = 1
-		}
-		_, _ = hasher.Write([]byte{isFinalByte})
-	default:
-		panic(ErrBadVersion{version})
-	}
-	_, _ = hasher.Write(payloadChunk)
-
-	var buf bytes.Buffer
-	_, _ = buf.Write([]byte(signatureAttachedString))
-	_, _ = buf.Write(hasher.Sum(nil))
-
-	return buf.Bytes()
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func detachedSignatureInput(headerHash headerHash, plaintext []byte) []byte {
-	hasher := sha512.New()
-	_, _ = hasher.Write(headerHash[:])
-	_, _ = hasher.Write(plaintext)
+// Nothing to do.
 
-	return detachedSignatureInputFromHash(hasher.Sum(nil))
+func detachedSignatureInput(headerHash headerHash, plaintext []byte) []byte {
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func detachedSignatureInputFromHash(plaintextAndHeaderHash []byte) []byte {
-	var buf bytes.Buffer
-	_, _ = buf.Write([]byte(signatureDetachedString))
-	_, _ = buf.Write(plaintextAndHeaderHash)
-
-	return buf.Bytes()
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func copyEqualSize(out, in []byte) {
-	if len(out) != len(in) {
-		panic(fmt.Sprintf("len(out)=%d != len(in)=%d", len(out), len(in)))
-	}
-	copy(out, in)
-}
+func copyEqualSize(out, in []byte) { _ = "STUB: not implemented"; return }
 
-func copyEqualSizeStr(out []byte, in string) {
-	if len(out) != len(in) {
-		panic(fmt.Sprintf("len(out)=%d != len(in)=%d", len(out), len(in)))
-	}
-	copy(out, in)
-}
+func copyEqualSizeStr(out []byte, in string) { _ = "STUB: not implemented"; return }
 
-func sliceToByte24(in []byte) [24]byte {
-	var out [24]byte
-	copyEqualSize(out[:], in)
-	return out
-}
+func sliceToByte24(in []byte) [24]byte { _ = "STUB: not implemented"; return nil }
 
-func stringToByte24(in string) [24]byte {
-	var out [24]byte
-	copyEqualSizeStr(out[:], in)
-	return out
-}
+func stringToByte24(in string) [24]byte { _ = "STUB: not implemented"; return nil }
 
-func sliceToByte32(in []byte) [32]byte {
-	var out [32]byte
-	copyEqualSize(out[:], in)
-	return out
-}
+func sliceToByte32(in []byte) [32]byte { _ = "STUB: not implemented"; return nil }
 
-func sliceToByte64(in []byte) [64]byte {
-	var out [64]byte
-	copyEqualSize(out[:], in)
-	return out
-}
+func sliceToByte64(in []byte) [64]byte { _ = "STUB: not implemented"; return nil }
 
 type macKey [cryptoAuthKeyBytes]byte
 
@@ -137,73 +66,48 @@ type payloadHash [sha512.Size]byte
 type payloadAuthenticator [cryptoAuthBytes]byte
 
 func (pa payloadAuthenticator) Equal(other payloadAuthenticator) bool {
-	return hmac.Equal(pa[:], other[:])
+	_ = "STUB: not implemented"
+	return false
 }
 
 func computePayloadAuthenticator(macKey macKey, payloadHash payloadHash) payloadAuthenticator {
+	_ = "STUB: not implemented"
 	// Equivalent to crypto_auth, but using Go's builtin HMAC. Truncates
 	// SHA512, instead of calling SHA512/256, which has different IVs.
-	authenticatorDigest := hmac.New(sha512.New, macKey[:])
-	_, _ = authenticatorDigest.Write(payloadHash[:])
-	fullMAC := authenticatorDigest.Sum(nil)
-	return sliceToByte32(fullMAC[:cryptoAuthBytes])
+	return *new(payloadAuthenticator)
 }
 
 func computeMACKeySingle(secret BoxSecretKey, public BoxPublicKey, nonce Nonce) macKey {
-	macKeyBox := secret.Box(public, nonce, make([]byte, cryptoAuthKeyBytes))
-	return sliceToByte32(macKeyBox[chacha20poly1305.Overhead : chacha20poly1305.Overhead+cryptoAuthKeyBytes])
+	_ = "STUB: not implemented"
+	return *new(macKey)
 }
 
 func sum512Truncate256(in []byte) [32]byte {
+	_ = "STUB: not implemented"
 	// Consistent with computePayloadAuthenticator in that it
 	// truncates SHA512 instead of calling SHA512/256, which has
 	// different IVs.
-	sum512 := sha512.Sum512(in)
-	return sliceToByte32(sum512[:32])
+	return nil
 }
 
 func computePayloadHash(version Version, headerHash headerHash, nonce Nonce, ciphertext []byte, isFinal bool) payloadHash {
-	payloadDigest := sha512.New()
-	_, _ = payloadDigest.Write(headerHash[:])
-	_, _ = payloadDigest.Write(nonce[:])
-	switch version.Major {
-	case 1:
-	// Nothing to do.
-	case 2:
-		var isFinalByte byte
-		if isFinal {
-			isFinalByte = 1
-		}
-		_, _ = payloadDigest.Write([]byte{isFinalByte})
-	default:
-		panic(ErrBadVersion{version})
-	}
-	_, _ = payloadDigest.Write(ciphertext)
-	h := payloadDigest.Sum(nil)
-	return sliceToByte64(h)
+	_ = "STUB: not implemented"
+	return *new(payloadHash)
 }
+
+// Nothing to do.
 
 func computeSigncryptionSignatureInput(headerHash headerHash, nonce Nonce, isFinal bool, chunkPlaintext []byte) []byte {
-	signatureInput := []byte(signatureEncryptedString)
-	// This is a bit redundant, as the nonce already contains part
-	// of the header hash and the isFinal flag. However, we
-	// truncate the header hash pretty severely for the nonce, so
-	// it seems a bit safer to be redundant.
-	signatureInput = append(signatureInput, headerHash[:]...)
-	signatureInput = append(signatureInput, nonce[:]...)
-	var isFinalByte byte
-	if isFinal {
-		isFinalByte = 1
-	}
-	signatureInput = append(signatureInput, isFinalByte)
-	plaintextHash := sha512.Sum512(chunkPlaintext)
-	signatureInput = append(signatureInput, plaintextHash[:]...)
-	return signatureInput
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func hashHeader(headerBytes []byte) headerHash {
-	return sha512.Sum512(headerBytes)
-}
+// This is a bit redundant, as the nonce already contains part
+// of the header hash and the isFinal flag. However, we
+// truncate the header hash pretty severely for the nonce, so
+// it seems a bit safer to be redundant.
+
+func hashHeader(headerBytes []byte) headerHash { _ = "STUB: not implemented"; return *new(headerHash) }
 
 // VersionValidator is a function that takes a version and returns nil
 // if it's a valid version, and an error otherwise.
@@ -212,67 +116,38 @@ type VersionValidator func(version Version) error
 // CheckKnownMajorVersion returns nil if the given version has a known
 // major version. You probably want to use this with NewDecryptStream,
 // unless you want to restrict to specific versions only.
-func CheckKnownMajorVersion(version Version) error {
-	for _, knownVersion := range KnownVersions() {
-		if version.Major == knownVersion.Major {
-			return nil
-		}
-	}
-	return ErrBadVersion{version}
-}
+func CheckKnownMajorVersion(version Version) error { _ = "STUB: not implemented"; return nil }
 
 // SingleVersionValidator returns a VersionValidator that returns nil
 // if its given version is equal to desiredVersion.
 func SingleVersionValidator(desiredVersion Version) VersionValidator {
-	return func(version Version) error {
-		if version == desiredVersion {
-			return nil
-		}
-
-		return ErrBadVersion{version}
-	}
+	_ = "STUB: not implemented"
+	return *new(VersionValidator)
 }
 
 func checkChunkState(version Version, chunkLen int, blockIndex uint64, isFinal bool) error {
-	switch version.Major {
-	case 1:
-		// For V1, we derive isFinal from the chunk length, so
-		// if there's a mismatch, that's a bug and not a
-		// stream error.
-		if (chunkLen == 0) != isFinal {
-			panic(fmt.Sprintf("chunkLen=%d and isFinal=%t", chunkLen, isFinal))
-		}
-
-	case 2:
-		// TODO: Ideally, we'd have tests exercising this case.
-		if (chunkLen == 0) && (blockIndex != 0 || !isFinal) {
-			return ErrUnexpectedEmptyBlock
-		}
-
-	default:
-		panic(ErrBadVersion{version})
-	}
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
+// For V1, we derive isFinal from the chunk length, so
+// if there's a mismatch, that's a bug and not a
+// stream error.
+
+// TODO: Ideally, we'd have tests exercising this case.
+
 // assertEncodedChunkState sanity-checks some encoded chunk parameters.
 func assertEncodedChunkState(version Version, encodedChunk []byte, encodingOverhead int, blockIndex uint64, isFinal bool) {
-	if len(encodedChunk) < encodingOverhead {
-		panic("encodedChunk is too small")
-	}
-
-	err := checkChunkState(version, len(encodedChunk)-encodingOverhead, blockIndex, isFinal)
-	if err != nil {
-		panic(err)
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 // checkDecodedChunkState sanity-checks some decoded chunk
 // parameters. A returned error means there's something wrong with the
 // decoded stream.
 func checkDecodedChunkState(version Version, chunk []byte, seqno packetSeqno, isFinal bool) error {
+	_ = "STUB: not implemented"
 	// The first decoded block has seqno 1, since the header bytes
 	// are decoded first.
-	return checkChunkState(version, len(chunk), uint64(seqno-1), isFinal)
+	return nil
 }

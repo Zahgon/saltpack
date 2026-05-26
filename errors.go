@@ -5,7 +5,6 @@ package saltpack
 
 import (
 	"errors"
-	"fmt"
 )
 
 var (
@@ -114,37 +113,21 @@ type ErrBadFrame struct {
 	msg string
 }
 
-func (e ErrBadFrame) Error() string {
-	return fmt.Sprintf("Error in framing: %s", e.msg)
-}
+func (e ErrBadFrame) Error() string { _ = "STUB: not implemented"; return "" }
 
-func makeErrBadFrame(format string, args ...any) error {
-	return ErrBadFrame{fmt.Sprintf(format, args...)}
-}
+func makeErrBadFrame(format string, args ...any) error { _ = "STUB: not implemented"; return nil }
 
-func (e ErrNoSenderKey) Error() string {
-	return "no sender key found for message"
-}
+func (e ErrNoSenderKey) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrWrongMessageType) Error() string {
-	return fmt.Sprintf("Wrong saltpack message type: wanted %s, but got %s instead", e.Wanted, e.Received)
-}
+func (e ErrWrongMessageType) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrBadVersion) Error() string {
-	return fmt.Sprintf("Unsupported version (%s)", e.received)
-}
+func (e ErrBadVersion) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrBadCiphertext) Error() string {
-	return fmt.Sprintf("In packet %d: bad ciphertext; failed Poly1305", e)
-}
+func (e ErrBadCiphertext) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrBadTag) Error() string {
-	return fmt.Sprintf("In packet %d: bad Poly1305 tag; data was corrupted in transit", e)
-}
+func (e ErrBadTag) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrRepeatedKey) Error() string {
-	return fmt.Sprintf("Repeated recipient key: %x", []byte(e))
-}
+func (e ErrRepeatedKey) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrInvalidParameter signifies that a function was called with
 // an invalid parameter.
@@ -152,6 +135,4 @@ type ErrInvalidParameter struct {
 	message string
 }
 
-func (e ErrInvalidParameter) Error() string {
-	return fmt.Sprintf("Invalid parameter: %s", e.message)
-}
+func (e ErrInvalidParameter) Error() string { _ = "STUB: not implemented"; return "" }
